@@ -21,4 +21,5 @@ class SignInActivity : AppCompatActivity() {
             startActivity(Intent(applicationContext,SignUpActivity::class.java))
         }
     }
+
 }
