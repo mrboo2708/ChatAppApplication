@@ -27,6 +27,7 @@
         </TextView>
         
         <FrameLayout
+            android:id="@+id/layoutImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_20sdp">
@@ -40,8 +41,9 @@
                 app:riv_oval="true">
                 
             </com.makeramen.roundedimageview.RoundedImageView>
-            
+
             <TextView
+                android:id="@+id/textAddImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
