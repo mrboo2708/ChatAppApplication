@@ -8,7 +8,7 @@ import java.io.ByteArrayOutputStream
 class ConvertStuff {
 
 
-    companion object{
+    companion object {
 
     }
 
