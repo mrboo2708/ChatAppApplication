@@ -19,6 +19,16 @@
 
     </View>
 
+    <View
+        android:id="@+id/headerBackground"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/primary"
+        app:layout_constraintBottom_toTopOf="@id/viewSupporter"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </View>
+
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imageBack"
         android:layout_width="@dimen/_30sdp"
@@ -29,7 +39,8 @@
         android:padding="@dimen/_5sdp"
         android:src="@drawable/ic_back"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/white">
 
     </androidx.appcompat.widget.AppCompatImageView>
 
@@ -43,7 +54,8 @@
         android:padding="@dimen/_4sdp"
         android:src="@drawable/ic_info"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/white">
 
     </androidx.appcompat.widget.AppCompatImageView>
 
@@ -56,7 +68,7 @@
         android:ellipsize="end"
         android:gravity="center"
         android:maxLines="1"
-        android:textColor="@color/primary_text"
+        android:textColor="@color/white"
         android:textSize="@dimen/_14ssp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@id/imageBack"
@@ -65,6 +77,17 @@
         app:layout_constraintTop_toTopOf="@id/imageBack">
 
     </TextView>
+
+    <View
+        android:id="@+id/viewSupporter"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/primary"
+        android:layout_marginTop="@dimen/_12sdp"
+        app:layout_constraintTop_toBottomOf="@id/imageBack"
+        >
+
+    </View>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chatRecyclerView"
@@ -75,9 +98,10 @@
         android:visibility="gone"
         android:overScrollMode="never"
         android:padding="@dimen/_20sdp"
+        app:stackFromEnd="true"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="@id/viewBackground"
-        app:layout_constraintTop_toBottomOf="@id/imageBack">
+        app:layout_constraintTop_toBottomOf="@id/viewSupporter">
 
     </androidx.recyclerview.widget.RecyclerView>
     
