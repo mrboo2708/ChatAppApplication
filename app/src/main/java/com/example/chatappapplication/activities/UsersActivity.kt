@@ -1,5 +1,6 @@
 package com.example.chatappapplication.activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -7,6 +8,7 @@ import com.example.chatappapplication.R
 import com.example.chatappapplication.adapters.UsersAdapter
 import com.example.chatappapplication.databinding.ActivityMainBinding
 import com.example.chatappapplication.databinding.ActivityUsersBinding
+import com.example.chatappapplication.listener.UserListener
 import com.example.chatappapplication.utilities.Constants
 import com.example.chatappapplication.utilities.PreferenceManager
 import com.google.firebase.firestore.ktx.firestore
@@ -14,7 +16,7 @@ import com.google.firebase.ktx.Firebase
 import com.example.chatappapplication.models.User
 import com.google.firebase.firestore.QueryDocumentSnapshot
 
-class UsersActivity : AppCompatActivity() {
+class UsersActivity : AppCompatActivity(),UserListener {
     private lateinit var binding: ActivityUsersBinding
     private lateinit var preferenceManager: PreferenceManager
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,10 +55,11 @@ class UsersActivity : AppCompatActivity() {
                     user.email = query.getString(Constants.KEY_EMAIL).toString()
                     user.image = query.getString(Constants.KEY_IMAGE).toString()
                     user.token = query.getString(Constants.KEY_FCM_TOKEN).toString()
+                    user.id = query.id
                     users.add(user)
                 }
                 if(users.size > 0){
-                    val userAdapter : UsersAdapter = UsersAdapter(users)
+                    val userAdapter : UsersAdapter = UsersAdapter(users,this)
                     binding.userRecyclerView.adapter = userAdapter
                     binding.userRecyclerView.visibility = View.VISIBLE
                 }
@@ -78,5 +81,12 @@ class UsersActivity : AppCompatActivity() {
         else{
             binding.processBar.visibility = View.INVISIBLE
         }
+    }
+
+    override fun onUserClicked(user: User) {
+        val intent = Intent(applicationContext,ChatActivity::class.java)
+        intent.putExtra(Constants.KEY_USER,user)
+        startActivity(intent)
+        finish()
     }
 }

@@ -1,24 +1,18 @@
 package com.example.chatappapplication.activities
 
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.chatappapplication.R
 import com.example.chatappapplication.databinding.ActivityMainBinding
 import com.example.chatappapplication.utilities.Constants
 import com.example.chatappapplication.utilities.PreferenceManager
 import android.util.Base64
 import android.widget.Toast
-import com.google.common.primitives.Bytes
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
-import com.google.firebase.messaging.FirebaseMessagingService
-import java.lang.reflect.Field
-import java.util.Objects
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding

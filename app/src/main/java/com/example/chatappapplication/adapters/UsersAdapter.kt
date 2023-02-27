@@ -7,10 +7,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatappapplication.databinding.ItemContainerUserBinding
+import com.example.chatappapplication.listener.UserListener
 import com.example.chatappapplication.models.User
 
 
-class UsersAdapter(private val userList: List<User>) : RecyclerView.Adapter<UsersAdapter.UserViewHolder>(){
+class UsersAdapter(private val userList: MutableList<User>,val userListener: UserListener) : RecyclerView.Adapter<UsersAdapter.UserViewHolder>(){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
         val itemBinding = ItemContainerUserBinding.inflate(LayoutInflater.from(parent.context),parent,false)
@@ -25,13 +26,16 @@ class UsersAdapter(private val userList: List<User>) : RecyclerView.Adapter<User
     override fun getItemCount(): Int = userList.size
 
 
-    class UserViewHolder(private val itemBinding: ItemContainerUserBinding) :
+    inner class UserViewHolder(private val itemBinding: ItemContainerUserBinding) :
         RecyclerView.ViewHolder(itemBinding.root)
     {
         fun bind(user : User){
             itemBinding.textName.setText(user.name)
             itemBinding.textEmail.setText(user.email)
             itemBinding.imageProfile.setImageBitmap(getUserImage(user.image))
+            itemBinding.root.setOnClickListener{
+                userListener.onUserClicked(user)
+            }
         }
 
         private fun getUserImage(encodedImage: String): Bitmap{
@@ -40,8 +44,6 @@ class UsersAdapter(private val userList: List<User>) : RecyclerView.Adapter<User
         }
 
     }
-
-
 
 
 
