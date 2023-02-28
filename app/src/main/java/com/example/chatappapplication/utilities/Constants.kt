@@ -17,8 +17,12 @@ class Constants {
         var KEY_RECEIVER_ID = "receiverId"
         var KEY_MESSAGE = "message"
         var KEY_TIMESTAMP = "timestamp"
-
-
+        var KEY_COLLECTION_CONVERSATION = "conversations"
+        var KEY_SENDER_NAME = "senderName"
+        var KEY_RECEIVER_NAME = "receiverName"
+        var KEY_SENDER_IMAGE = "senderImage"
+        var KEY_RECEIVER_IMAGE = "receiverImage"
+        var KEY_LAST_MESSAGE = "lastMessage"
     }
 
     var companion = Companion
