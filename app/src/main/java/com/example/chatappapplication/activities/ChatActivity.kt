@@ -13,12 +13,18 @@ import com.example.chatappapplication.models.ChatMessage
 import com.example.chatappapplication.models.User
 import com.example.chatappapplication.utilities.Constants
 import com.example.chatappapplication.utilities.PreferenceManager
-import com.google.firebase.firestore.*
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
+import com.google.firebase.firestore.DocumentChange
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.EventListener
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.HashMap
 
 class ChatActivity : AppCompatActivity() {
     private lateinit var binding : ActivityChatBinding
@@ -27,6 +33,7 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var chatAdapter: ChatAdapter
     private lateinit var preferenceManager : PreferenceManager
     private lateinit var database : FirebaseFirestore
+    private var conversionId : String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +61,22 @@ class ChatActivity : AppCompatActivity() {
         message[Constants.KEY_MESSAGE] = binding.inputMessage.text.toString()
         message[Constants.KEY_TIMESTAMP] = Date()
         database.collection(Constants.KEY_COLLECTION_CHAT).add(message)
+        if(conversionId!= null){
+            updateConversion(binding.inputMessage.text.toString())
+        }
+        else{
+            val conversion : HashMap<String,Any> = hashMapOf()
+            conversion.put(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID).toString())
+            conversion.put(Constants.KEY_SENDER_NAME,preferenceManager.getString(Constants.KEY_NAME).toString())
+            conversion.put(Constants.KEY_SENDER_IMAGE, preferenceManager.getString(Constants.KEY_IMAGE).toString())
+            conversion.put(Constants.KEY_RECEIVER_ID,receiverUser.id)
+            conversion.put(Constants.KEY_RECEIVER_NAME,receiverUser.name)
+            conversion.put(Constants.KEY_RECEIVER_IMAGE,receiverUser.image)
+            conversion.put(Constants.KEY_LAST_MESSAGE,binding.inputMessage.text.toString())
+            conversion.put(Constants.KEY_TIMESTAMP, Date())
+            addConversion(conversion)
+
+        }
         binding.inputMessage.text = null
     }
 
@@ -114,6 +137,9 @@ class ChatActivity : AppCompatActivity() {
                 binding.chatRecyclerView.visibility = View.VISIBLE
             }
             binding.processBar.visibility = View.GONE
+            if(conversionId == null){
+                checkForConversion()
+            }
         }
 
 
@@ -129,4 +155,50 @@ class ChatActivity : AppCompatActivity() {
     private fun getReadableDateTime(date : Date): String{
         return SimpleDateFormat("MMMM dd, yyyy - hh:mm a",Locale.getDefault()).format(date)
     }
+
+    private fun addConversion(conversion : HashMap<String,Any>){
+        database.collection(Constants.KEY_COLLECTION_CONVERSATION)
+            .add(conversion)
+            .addOnSuccessListener {
+                conversionId = it.id
+            }
+    }
+
+    private fun updateConversion(message : String){
+        val document : DocumentReference = database.collection(Constants.KEY_COLLECTION_CONVERSATION)
+            .document(conversionId.toString())
+        document.update(
+            Constants.KEY_LAST_MESSAGE, message,
+            Constants.KEY_TIMESTAMP, Date()
+        )
+    }
+
+    private fun checkForConversion(){
+        if(chatMessage.size != 0){
+            checkForConversionRemote(preferenceManager.getString(Constants.KEY_USER_ID).toString(),
+                                    receiverUser.id
+            )
+            checkForConversionRemote(receiverUser.id,
+                                    preferenceManager.getString(Constants.KEY_USER_ID).toString())
+        }
+    }
+
+    private fun checkForConversionRemote(senderId:String,receiverId : String){
+        database.collection(Constants.KEY_COLLECTION_CONVERSATION)
+            .whereEqualTo(Constants.KEY_SENDER_ID,senderId)
+            .whereEqualTo(Constants.KEY_RECEIVER_ID,receiverId)
+            .get()
+            .addOnCompleteListener(conversionCompleteListener)
+    }
+
+
+    private val conversionCompleteListener =
+        OnCompleteListener { task: Task<QuerySnapshot?> ->
+            if (task.isSuccessful && task.result != null && task.result!!
+                    .documents.size > 0
+            ) {
+                val documentSnapshot = task.result!!.documents[0]
+                conversionId = documentSnapshot.id
+            }
+        }
 }
