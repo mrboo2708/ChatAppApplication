@@ -16,7 +16,7 @@ import com.google.firebase.ktx.Firebase
 import com.example.chatappapplication.models.User
 import com.google.firebase.firestore.QueryDocumentSnapshot
 
-class UsersActivity : AppCompatActivity(),UserListener {
+class UsersActivity : BaseActivity(),UserListener {
     private lateinit var binding: ActivityUsersBinding
     private lateinit var preferenceManager: PreferenceManager
     override fun onCreate(savedInstanceState: Bundle?) {

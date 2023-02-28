@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.util.Base64
 import android.util.Log
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import com.example.chatappapplication.adapters.ChatAdapter
 import com.example.chatappapplication.databinding.ActivityChatBinding
 import com.example.chatappapplication.models.ChatMessage
@@ -15,18 +14,14 @@ import com.example.chatappapplication.utilities.Constants
 import com.example.chatappapplication.utilities.PreferenceManager
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
-import com.google.firebase.firestore.DocumentChange
-import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.*
 import com.google.firebase.firestore.EventListener
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.HashMap
 
-class ChatActivity : AppCompatActivity() {
+class ChatActivity : BaseActivity() {
     private lateinit var binding : ActivityChatBinding
     private lateinit var receiverUser : User
     private  var chatMessage :ArrayList<ChatMessage> = arrayListOf()
@@ -34,6 +29,7 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var preferenceManager : PreferenceManager
     private lateinit var database : FirebaseFirestore
     private var conversionId : String? = null
+    private var isReceiverAvailable = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,6 +74,30 @@ class ChatActivity : AppCompatActivity() {
 
         }
         binding.inputMessage.text = null
+    }
+
+    private fun listenAvailabilityReceiver() {
+        database.collection(Constants.KEY_COLLECTION_USER).document(receiverUser.id)
+            .addSnapshotListener(this@ChatActivity) { value, error ->
+                if (error != null) {
+                    return@addSnapshotListener
+                }
+                if(value != null){
+                    if(value.getLong(Constants.KEY_AVAILABILITY)!= null){
+                        var availability = Objects.requireNonNull(
+                            value.getLong(Constants.KEY_AVAILABILITY)!!
+                        ).toInt()
+                        isReceiverAvailable = availability == 1
+                    }
+                }
+                if(isReceiverAvailable){
+                    binding.textAvailability.visibility = View.VISIBLE
+                }
+                else {
+                    binding.textAvailability.visibility = View.GONE
+                }
+
+            }
     }
 
     private fun getBitMapFromEncodedString(encodedImage : String) : Bitmap {
@@ -201,4 +221,9 @@ class ChatActivity : AppCompatActivity() {
                 conversionId = documentSnapshot.id
             }
         }
+
+    override fun onResume() {
+        super.onResume()
+        listenAvailabilityReceiver()
+    }
 }
