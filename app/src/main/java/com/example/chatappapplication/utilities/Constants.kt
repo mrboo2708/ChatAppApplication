@@ -23,6 +23,7 @@ class Constants {
         var KEY_SENDER_IMAGE = "senderImage"
         var KEY_RECEIVER_IMAGE = "receiverImage"
         var KEY_LAST_MESSAGE = "lastMessage"
+        var KEY_AVAILABILITY = "availability"
     }
 
     var companion = Companion

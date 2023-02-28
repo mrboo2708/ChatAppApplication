@@ -23,7 +23,7 @@ import java.util.*
 import kotlin.Comparator
 import kotlin.collections.HashMap
 
-class MainActivity : AppCompatActivity(), ConversionListener{
+class MainActivity : BaseActivity(), ConversionListener{
     private lateinit var binding: ActivityMainBinding
     private lateinit var preferenceManager: PreferenceManager
     private lateinit var conversations : MutableList<ChatMessage>
